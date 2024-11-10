@@ -18,7 +18,7 @@ public static class NodeAppHostingExtension
             : ["run", scriptName];
 
         workingDirectory = PathNormalizer.NormalizePathForCurrentPlatform(Path.Combine(builder.AppHostDirectory, workingDirectory));
-        var resource = new NodeAppResource(name, useBunx? "bunx --hot --bun" : "bun --hot --bun", workingDirectory);
+        var resource = new NodeAppResource(name, useBunx? "bunx --hot --bun bun" : "bun --hot", workingDirectory);
 
         return builder.AddResource(resource)
             .WithNodeDefaults()
