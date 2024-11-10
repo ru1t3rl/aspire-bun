@@ -13,6 +13,8 @@ jobs:
   semantic-release:
     name: Create a Package Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,16 +34,13 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.0.0
         with:
           updateAssemblyInfo: true
-        # uses: mathieudutour/github-tag-action@v6.2
-        # with:
-        #   github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.tag_version.outputs.FullSemVer }}
-          name: Release ${{ steps.tag_version.outputs.FullSemVer }}
+          tag: ${{ steps.tag_version.outputs.MajorMinorPatch }}
+          name: Release ${{ steps.tag_version.outputs.MajorMinorPatch }}
       - name: Create NuGet Package
-        run: dotnet build -c Release ./${{ env.PROJECT_NAME }}.sln && dotnet pack -c Release -p:PackageVersion=${{ steps.tag_version.outputs.FullSemVer }} -o . ./${{ env.PROJECT_NAME }}.sln
+        run: dotnet build -c Release ./${{ env.PROJECT_NAME }}.sln && dotnet pack -c Release -p:PackageVersion=${{ steps.tag_version.outputs.MajorMinorPatch }} -o . ./${{ env.PROJECT_NAME }}.sln
       - name: Upload Package for Publishing
         uses: actions/upload-artifact@v4
         with:
