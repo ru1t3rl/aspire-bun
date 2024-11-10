@@ -1,0 +1,53 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+        
+env:
+  PROJECT_NAME: Aspire.Hosting.Bun
+        
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+          source-url: https://nuget.pkg.github.com/ru1t3rl/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - run: dotnet build $PROJECT_NAME
+      - name: Create the package
+        run: dotnet pack --configuration Release $PROJECT_NAME
+      - name: Publish the package to GPR
+        run: dotnet nuget push $PROJECT_NAME/bin/Release/*.nupkg
+  
+#  build:
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 15
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Setup 
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: 8.x
+#          cache: true
+#        run: dotnet resore --locked-mode
+#      - name: Set VERSION variable from tag
+#        run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+#      - name: Build
+#        run: dotnet build --configuration Release /p:Version=${VERSION}
+#      - name: Test
+#        run: dotnet test --configuration Release /p:Version=${VERSION} --no-build
+#      - name: Pack
+#        run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
+#      - name: Push
+#        run: dotnet nuget push Aspire.Hosting.Bun.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${GITHUB_TOKEN}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
