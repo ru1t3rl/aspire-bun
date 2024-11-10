@@ -14,16 +14,16 @@ jobs:
     name: Create a Package Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3 # Updated to the latest version
+      - uses: actions/checkout@v4
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3 # Updated to the latest version
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
       - name: Restore dependencies
         run: dotnet restore ./${{ env.PROJECT_NAME }}.sln
       - name: Bump version and push tag
         id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2 # Updated to the latest version
+        uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create a GitHub release
@@ -35,7 +35,7 @@ jobs:
       - name: Create NuGet Package
         run: dotnet build -c Release ./${{ env.PROJECT_NAME }}.sln && dotnet pack -c Release -p:PackageVersion=${{ steps.tag_version.outputs.new_version }} -o . ./${{ env.PROJECT_NAME }}.sln
       - name: Upload Package for Publishing
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: PackedLib
           path: ./*.nupkg
@@ -46,11 +46,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download built project
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: PackedLib
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3 # Updated to the latest version
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x # Match the version used in semantic-release
       - name: Push Package to GitHub
