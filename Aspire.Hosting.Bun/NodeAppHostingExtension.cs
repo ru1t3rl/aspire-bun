@@ -29,8 +29,8 @@ public static class NodeAppHostingExtension
         else
         {
             allArgs = args is { Length: > 0 }
-                ? ["--hot run", scriptName, "--", .. args]
-                : ["--hot run", scriptName];
+                ? ["--hot --bun run", scriptName, "--", .. args]
+                : ["--hot --bun run", scriptName];
         }
 
         workingDirectory =
